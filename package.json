@@ -1,0 +1,20 @@
+{
+  "name": "produto-clinica",
+  "version": "1.0.0",
+  "description": "Sistema de tempo de espera estimado para clinica - check-in publico via QR/link",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "node-cron": "^3.0.3",
+    "uuid": "^9.0.1"
+  }
+}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+  <title>Tempo de espera - Clinica</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <main class="card">
+    <h1>Tempo de espera estimado</h1>
+
+    <section id="estimate-block" aria-live="polite">
+      <div class="minutes" id="minutes">--</div>
+      <div class="minutes-label" id="minutes-label">minutos</div>
+      <p class="hint" id="mode-hint">Carregando estimativa...</p>
+    </section>
+
+    <button id="checkin-btn" class="btn">Confirmar presenca (check-in)</button>
+    <p class="status" id="checkin-status"></p>
+
+    <footer>
+      <span>Ultima atualizacao: <strong id="last-updated">--:--</strong></span>
+    </footer>
+  </main>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

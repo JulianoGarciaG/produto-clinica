@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel administrativo - Recepcao</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="admin-wrap">
+    <h1>Painel da recepcao</h1>
+
+    <section class="panel" id="login-panel">
+      <h2>Entrar</h2>
+      <div class="inline-form">
+        <input type="password" id="login-password" placeholder="senha" autocomplete="current-password" />
+        <button id="login-btn" class="btn" style="width:auto; padding:10px 16px;">Entrar</button>
+      </div>
+      <p class="status" id="login-error" style="color:#f04438;"></p>
+    </section>
+
+    <div id="dashboard" style="display:none;">
+    <section class="panel">
+      <h2>Status da fila</h2>
+      <p>
+        Situacao: <span id="pause-pill" class="pill">--</span><br />
+        Tempo medio de atendimento: <strong id="avg-time">--</strong> min<br />
+        Ultima atualizacao: <strong id="last-updated">--:--</strong>
+      </p>
+      <button id="pause-btn" class="btn" style="width:auto; padding:10px 16px;">--</button>
+    </section>
+
+    <section class="panel">
+      <h2>Ajuste manual do tempo medio</h2>
+      <div class="inline-form">
+        <input type="number" id="avg-input" min="1" placeholder="minutos" />
+        <button id="avg-set-btn" class="btn" style="width:auto; padding:10px 16px;">Aplicar</button>
+        <button id="avg-clear-btn" class="btn" style="width:auto; padding:10px 16px; background:#667085;">Voltar ao automatico</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Fila atual (ordem de chegada)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Chegada</th>
+            <th>Espera</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="queue-body"></tbody>
+      </table>
+      <p id="empty-msg" class="hint" style="display:none;">Nenhum paciente na fila.</p>
+    </section>
+
+    <button id="logout-btn" class="btn" style="width:auto; padding:10px 16px; background:#667085;">Sair</button>
+    </div>
+  </div>
+
+  <script src="/admin/js/admin.js"></script>
+</body>
+</html>
