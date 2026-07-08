@@ -1,56 +1,39 @@
-# Tempo de espera estimado - Clinica
+# Tempo de Espera Estimado — Clínica
 
-Sistema publico (sem login) de tempo de espera estimado da fila, acessivel via QR code/link, com
-painel administrativo interno para a recepcao. Implementado conforme
-`prompt-implementacao-tempo-espera.md`.
+Um sistema simples para a clínica mostrar, em tempo real, quanto tempo falta para o paciente ser
+atendido — sem precisar de aplicativo, cadastro ou senha.
 
-## Como rodar
+## Como funciona
+
+1. **O paciente chega e escaneia um QR code** (fixado na recepção ou sala de espera).
+2. **Toca em um único botão** para confirmar presença — pronto, já está na fila.
+3. **A tela mostra o tempo estimado de espera**, em minutos, e o horário da última atualização.
+   - Quem já fez check-in vê uma estimativa personalizada, baseada na sua posição real na fila.
+   - Quem só está olhando o QR code (sem check-in) vê o tempo médio atual de espera da clínica.
+4. A fila é única e por ordem de chegada (o primeiro a chegar é o primeiro a ser atendido). O
+   sistema nunca mostra "você é o 5º da fila" — só o tempo estimado.
+
+O tempo estimado é recalculado automaticamente a cada 5 minutos, com base na duração média dos
+últimos atendimentos realizados.
+
+## Painel da recepção
+
+A equipe da recepção tem acesso a uma tela protegida por senha para:
+
+- Dar baixa (check-out) em um paciente já atendido
+- Corrigir ou remover um check-in feito por engano
+- Pausar a fila temporariamente (ex: emergência)
+- Ajustar manualmente o tempo médio de atendimento, se necessário
+
+## Rodando o projeto
 
 ```bash
 npm install
-cp .env.example .env   # ajuste ADMIN_PASSWORD antes de usar em producao
+cp .env.example .env   # defina uma senha em ADMIN_PASSWORD antes de usar de verdade
 npm start
 ```
 
-- Pagina publica: `http://localhost:3000/`
-- Painel da recepcao: `http://localhost:3000/admin/` (login com a senha de `ADMIN_PASSWORD`)
+- Página do paciente (para o QR code): `http://localhost:3000/`
+- Painel da recepção: `http://localhost:3000/admin/`
 
-Requer Node.js >= 22.5 (usa o modulo nativo `node:sqlite`, sem dependencias nativas para compilar).
-
-## Fluxo
-
-1. Paciente escaneia o QR/link e toca em "Confirmar presenca" (`POST /checkin`) — sem senha, sem
-   cadastro. Um token de sessao e salvo no `localStorage` do celular do paciente.
-2. A pagina consulta `GET /wait-time` (com o token, se houver) a cada 5 minutos e exibe apenas os
-   minutos estimados e o horario da ultima atualizacao (HH:MM) — nunca a posicao numerica.
-3. Um job agendado (`node-cron`, a cada 5 minutos) recalcula a media movel dos ultimos N
-   atendimentos concluidos e atualiza o horario de "ultima atualizacao".
-4. A recepcao usa o painel `/admin` para dar check-out, remover entradas erradas, pausar a fila
-   (emergencia) ou ajustar manualmente o tempo medio.
-
-## Decisoes de implementacao (pontos em aberto no prompt)
-
-- **Modo geral**: como o prompt pede "tempo medio atual da fila" sem posicao, ele é calculado como
-  a estimativa de quem entrasse na fila agora (`(fila_atual + 1) * tempo_medio`) — ou seja, o tempo
-  de espera atual de ponta a ponta da fila.
-- **Check-in sem agendamento previo**: tratado como "cheguei agora", sem vinculo a consulta
-  especifica, conforme sugerido no prompt.
-- **Check-out**: exclusivamente manual pela recepcao (padrao inicial sugerido no prompt).
-- **Autenticacao do admin**: o prompt não especificava; para nao deixar o painel totalmente aberto,
-  foi adicionado um login simples por senha (cookie de sessao httpOnly, sem cadastro de usuario) —
-  zero-friction para o paciente, protegido para a recepcao.
-
-## Estrutura
-
-```
-server.js                 # entrypoint Express
-src/db.js                 # node:sqlite + schema + settings key/value
-src/queue.js              # regras de negocio da fila (check-in, posicao, media movel, estimativa)
-src/scheduler.js           # job cron de recalculo a cada 5 min
-src/routes/public.js       # POST /checkin, GET /wait-time
-src/routes/admin.js        # login/logout/sessao + CRUD da fila (autenticado)
-src/middleware/adminAuth.js # sessao em memoria via cookie httpOnly
-public/                    # pagina publica (mobile-first)
-admin_panel/               # painel interno da recepcao
-data/clinica.db            # SQLite (criado automaticamente)
-```
+Requer Node.js 22.5 ou mais recente.
